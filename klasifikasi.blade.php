@@ -23,15 +23,15 @@
 
                 <div class="card-header bg-primary text-white text-center py-4">
 
-                    <h2 class="mb-2">
-                        Sistem Prediksi Kelulusan Mahasiswa
-                    </h2>
+                     <h2 class="mb-2">
+                         Sistem Prediksi Kelulusan Mahasiswa
+                     </h2>
 
-                    <p class="mb-0">
-                        Implementasi Metode Klasifikasi Naive Bayes
-                    </p>
+                     <p class="mb-0">
+                         Implementasi Metode Klasifikasi (Naive Bayes & K-Nearest Neighbors)
+                     </p>
 
-                </div>
+                 </div>
 
                 <div class="card-body">
 
@@ -63,23 +63,23 @@
 
                         <div class="col-md-6">
 
-                            <div class="card border-info">
-                                <div class="card-body text-center">
+                             <div class="card border-info">
+                                 <div class="card-body text-center">
 
-                                    <h6 class="text-info">
-                                        Algoritma
-                                    </h6>
+                                     <h6 class="text-info">
+                                         Algoritma
+                                     </h6>
 
-                                    <h3>
-                                        Naive Bayes
-                                    </h3>
+                                     <h3>
+                                         {{ session('algoritma_used', 'Naive Bayes') }}
+                                     </h3>
 
-                                    <small>
-                                        Classification
-                                    </small>
+                                     <small>
+                                         Classification
+                                     </small>
 
-                                </div>
-                            </div>
+                                 </div>
+                             </div>
 
                         </div>
 
@@ -93,106 +93,155 @@
 
                     <form action="{{ url('/predict') }}" method="POST">
 
-                        @csrf
+                         @csrf
 
-                        <div class="row">
+                         <div class="row">
 
-                            <div class="col-md-6 mb-3">
+                             <div class="col-md-6 mb-3">
 
-                                <label class="form-label fw-bold">
-                                    IPK
-                                </label>
+                                 <label class="form-label fw-bold">
+                                     Metode Klasifikasi
+                                 </label>
 
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    max="4"
-                                    name="ipk"
-                                    class="form-control"
-                                    placeholder="Contoh: 3.50"
-                                    required>
+                                 <select
+                                     class="form-select"
+                                     name="algoritma"
+                                     id="algoritmaSelect"
+                                     required>
 
-                            </div>
+                                     <option value="naive_bayes" {{ old('algoritma', 'naive_bayes') == 'naive_bayes' ? 'selected' : '' }}>
+                                         Naive Bayes
+                                     </option>
 
-                            <div class="col-md-6 mb-3">
+                                     <option value="knn" {{ old('algoritma') == 'knn' ? 'selected' : '' }}>
+                                         K-Nearest Neighbors (KNN)
+                                     </option>
 
-                                <label class="form-label fw-bold">
-                                    Kehadiran (%)
-                                </label>
+                                 </select>
 
-                                <input
-                                    type="number"
-                                    min="0"
-                                    max="100"
-                                    name="kehadiran"
-                                    class="form-control"
-                                    placeholder="Contoh: 90"
-                                    required>
+                             </div>
 
-                            </div>
+                             <div class="col-md-6 mb-3" id="kValueContainer" style="display: none;">
 
-                        </div>
+                                 <label class="form-label fw-bold">
+                                     Nilai K (Jumlah Tetangga)
+                                 </label>
 
-                        <div class="row">
+                                 <input
+                                     type="number"
+                                     min="1"
+                                     max="500"
+                                     name="k_value"
+                                     id="kValueInput"
+                                     class="form-control"
+                                     placeholder="Contoh: 5"
+                                     value="{{ old('k_value', 5) }}">
 
-                            <div class="col-md-6 mb-3">
+                             </div>
 
-                                <label class="form-label fw-bold">
-                                    SKS Lulus
-                                </label>
+                         </div>
 
-                                <input
-                                    type="number"
-                                    name="sks_lulus"
-                                    class="form-control"
-                                    placeholder="Contoh: 120"
-                                    required>
+                         <div class="row">
 
-                            </div>
+                             <div class="col-md-6 mb-3">
 
-                            <div class="col-md-6 mb-3">
+                                 <label class="form-label fw-bold">
+                                     IPK
+                                 </label>
 
-                                <label class="form-label fw-bold">
-                                    Status Kerja
-                                </label>
+                                 <input
+                                     type="number"
+                                     step="0.01"
+                                     min="0"
+                                     max="4"
+                                     name="ipk"
+                                     class="form-control"
+                                     placeholder="Contoh: 3.50"
+                                     value="{{ old('ipk') }}"
+                                     required>
 
-                                <select
-                                    class="form-select"
-                                    name="status_kerja"
-                                    required>
+                             </div>
 
-                                    <option value="">
-                                        -- Pilih Status --
-                                    </option>
+                             <div class="col-md-6 mb-3">
 
-                                    <option value="Ya">
-                                        Ya
-                                    </option>
+                                 <label class="form-label fw-bold">
+                                     Kehadiran (%)
+                                 </label>
 
-                                    <option value="Tidak">
-                                        Tidak
-                                    </option>
+                                 <input
+                                     type="number"
+                                     min="0"
+                                     max="100"
+                                     name="kehadiran"
+                                     class="form-control"
+                                     placeholder="Contoh: 90"
+                                     value="{{ old('kehadiran') }}"
+                                     required>
 
-                                </select>
+                             </div>
 
-                            </div>
+                         </div>
 
-                        </div>
+                         <div class="row">
 
-                        <div class="d-grid mt-4">
+                             <div class="col-md-6 mb-3">
 
-                            <button
-                                type="submit"
-                                class="btn btn-success btn-lg">
+                                 <label class="form-label fw-bold">
+                                     SKS Lulus
+                                 </label>
 
-                                Prediksi Kelulusan
+                                 <input
+                                     type="number"
+                                     name="sks_lulus"
+                                     class="form-control"
+                                     placeholder="Contoh: 120"
+                                     value="{{ old('sks_lulus') }}"
+                                     required>
 
-                            </button>
+                             </div>
 
-                        </div>
+                             <div class="col-md-6 mb-3">
 
-                    </form>
+                                 <label class="form-label fw-bold">
+                                     Status Kerja
+                                 </label>
+
+                                 <select
+                                     class="form-select"
+                                     name="status_kerja"
+                                     required>
+
+                                     <option value="">
+                                         -- Pilih Status --
+                                     </option>
+
+                                     <option value="Ya" {{ old('status_kerja') == 'Ya' ? 'selected' : '' }}>
+                                         Ya
+                                     </option>
+
+                                     <option value="Tidak" {{ old('status_kerja') == 'Tidak' ? 'selected' : '' }}>
+                                         Tidak
+                                     </option>
+
+                                 </select>
+
+                             </div>
+
+                         </div>
+
+                         <div class="d-grid mt-4">
+
+                             <button
+                                 type="submit"
+                                 class="btn btn-success btn-lg">
+
+                                 Prediksi Kelulusan
+
+                             </button>
+
+                         </div>
+
+                     </form>
 
                 </div>
 
@@ -216,57 +265,122 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    Swal.fire({
+     Swal.fire({
 
-        icon: '{{ session("prediction") == "Ya" ? "success" : "warning" }}',
+         icon: '{{ session("prediction") == "Ya" ? "success" : "warning" }}',
 
-        title: 'Hasil Prediksi',
+         title: 'Hasil Prediksi',
 
-        html: `
-            <div style="text-align:left;font-size:15px;">
+         html: `
+             <div style="text-align:left;font-size:15px;">
 
-                <p>
-                    <strong>Status Kelulusan :</strong>
-                </p>
+                 <p>
+                     <strong>Status Kelulusan :</strong>
+                 </p>
 
-                <h4 style="color:
-                {{ session('prediction') == 'Ya'
-                    ? '#198754'
-                    : '#dc3545' }}">
-                    {{ session('prediction') == 'Ya'
-                        ? '✅ Lulus Tepat Waktu'
-                        : '❌ Tidak Lulus Tepat Waktu' }}
-                </h4>
+                 <h4 style="color:
+                 {{ session('prediction') == 'Ya'
+                     ? '#198754'
+                     : '#dc3545' }}">
+                     {{ session('prediction') == 'Ya'
+                         ? '✅ Lulus Tepat Waktu'
+                         : '❌ Tidak Lulus Tepat Waktu' }}
+                 </h4>
 
-                <hr>
+                 <hr>
 
-                <p>
-                    Probabilitas Ya :
-                    <strong>
-                        {{ round(session('prob_ya',0) * 100,2) }}%
-                    </strong>
-                </p>
+                 <p>
+                     <strong>Algoritma :</strong>
+                     <span>{{ session('algoritma_used') }}</span>
+                 </p>
 
-                <p>
-                    Probabilitas Tidak :
-                    <strong>
-                        {{ round(session('prob_tidak',0) * 100,2) }}%
-                    </strong>
-                </p>
+                 <p>
+                     {{ session('algoritma_used') == 'K-Nearest Neighbors' ? 'Persentase Suara Ya :' : 'Probabilitas Ya :' }}
+                     <strong>
+                         {{ round(session('prob_ya',0) * 100,2) }}%
+                     </strong>
+                 </p>
 
-            </div>
-        `,
+                 <p>
+                     {{ session('algoritma_used') == 'K-Nearest Neighbors' ? 'Persentase Suara Tidak :' : 'Probabilitas Tidak :' }}
+                     <strong>
+                         {{ round(session('prob_tidak',0) * 100,2) }}%
+                     </strong>
+                 </p>
 
-        width: 650,
-        confirmButtonText: 'Tutup'
+                 @if(session('neighbors'))
+                 <hr>
+                 <p><strong>{{ session('k_value') }} Tetangga Terdekat (K-Nearest Neighbors):</strong></p>
+                 <div class="table-responsive">
+                     <table class="table table-sm table-striped table-bordered" style="font-size:12px;">
+                         <thead>
+                             <tr class="table-dark">
+                                 <th>ID</th>
+                                 <th>IPK</th>
+                                 <th>Kehadiran</th>
+                                 <th>SKS</th>
+                                 <th>Kerja</th>
+                                 <th>Tepat Waktu</th>
+                                 <th>Jarak</th>
+                             </tr>
+                         </thead>
+                         <tbody>
+                             @foreach(session('neighbors') as $neighbor)
+                             <tr>
+                                 <td>#{{ $neighbor['id'] }}</td>
+                                 <td>{{ number_format($neighbor['ipk'], 2) }}</td>
+                                 <td>{{ $neighbor['kehadiran'] }}%</td>
+                                 <td>{{ $neighbor['sks_lulus'] }}</td>
+                                 <td>{{ $neighbor['status_kerja'] }}</td>
+                                 <td>
+                                     <span class="badge {{ $neighbor['tepat_waktu'] == 'Ya' ? 'bg-success' : 'bg-warning text-dark' }}">
+                                         {{ $neighbor['tepat_waktu'] }}
+                                     </span>
+                                 </td>
+                                 <td>{{ $neighbor['distance'] }}</td>
+                             </tr>
+                             @endforeach
+                         </tbody>
+                     </table>
+                 </div>
+                 @endif
 
-    });
+             </div>
+         `,
+
+         width: 700,
+         confirmButtonText: 'Tutup'
+
+     });
 
 });
 
 </script>
 
 @endif
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const algoritmaSelect = document.getElementById('algoritmaSelect');
+    const kValueContainer = document.getElementById('kValueContainer');
+    const kValueInput = document.getElementById('kValueInput');
+
+    function toggleKValue() {
+        if (algoritmaSelect.value === 'knn') {
+            kValueContainer.style.display = 'block';
+            kValueInput.setAttribute('required', 'required');
+        } else {
+            kValueContainer.style.display = 'none';
+            kValueInput.removeAttribute('required');
+        }
+    }
+
+    if (algoritmaSelect) {
+        algoritmaSelect.addEventListener('change', toggleKValue);
+        toggleKValue();
+    }
+});
+</script>
 
 </body>
 
